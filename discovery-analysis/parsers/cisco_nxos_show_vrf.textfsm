@@ -1,0 +1,34 @@
+# Copyright (c) 2020 Cisco and/or its affiliates.
+#
+# This software is licensed to you under the terms of the Cisco Sample
+# Code License, Version 1.1 (the "License"). You may obtain a copy of the
+# License at
+#
+#                https://developer.cisco.com/docs/licenses
+#
+# All use of the material herein must be in accordance with the terms of
+# the License. All rights not expressly granted by the License are
+# reserved. Unless required by applicable law or agreed to separately in
+# writing, software distributed under the License is distributed on an "AS
+# IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied.
+#
+#---------------------------------------------------------------------
+# FSM Template for parsing the output of "show vrf" on Cisco NXOS
+#---------------------------------------------------------------------
+#
+# Sample command output:
+#
+# VRF-Name                           VRF-ID State   Reason                        
+# default                                 1 Up      --                            
+# management                              2 Up      --
+#
+Value Required NAME (\S+)
+Value ID (\d+)
+Value STATE (\S+)
+
+Start
+  # Line with Reason not defined
+  ^${NAME}\s+${ID}\s+${STATE}\s+-- -> Record
+  # Line with Reason containing none "-" characters
+  ^${NAME}\s+${ID}\s+${STATE}\s+.+ -> Record

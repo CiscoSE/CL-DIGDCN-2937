@@ -1,0 +1,84 @@
+# Copyright (c) 2020 Cisco and/or its affiliates.
+#
+# This software is licensed to you under the terms of the Cisco Sample
+# Code License, Version 1.1 (the "License"). You may obtain a copy of the
+# License at
+#
+#                https://developer.cisco.com/docs/licenses
+#
+# All use of the material herein must be in accordance with the terms of
+# the License. All rights not expressly granted by the License are
+# reserved. Unless required by applicable law or agreed to separately in
+# writing, software distributed under the License is distributed on an "AS
+# IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied.
+
+l2_endpoints:                         # Note: All extracted data may not be written to Excel, check parsable_data.yaml for information about available data
+  __data_source__: cmd_l2_endpoints   # Special key that holds the name of the data type where data is taken from. This data type is defined in the parsable_data.yaml file
+  device_name: __device_name__        # Special value used to indicate that the device name should be used
+  vlan: vlan                          # Key is the name of the column in the output, value is the name of the field in the analysis output and it is assume that there are no overlaps in case of multiple source data types
+  mac_address: mac_addr
+  interface: ports
+  # age: age
+  entry_type: entry_type
+l3_endpoints:
+  __data_source__: cmd_l3_endpoints
+  device_name: __device_name__
+  interface: interface
+  ip_address: ip_addr
+  mac_address: mac_addr
+  # age: age
+  # flags: flags
+interface_cfg:
+  __data_source__: cfg_interface
+  device_name: __device_name__
+  interface: interface
+  description: description
+  ip_address: ip_addr
+  prefix_length: prefix_length
+  mac_address: mac_addr
+  vrf: vrf_member
+  mtu: mtu
+  switchport_mode: switchport_mode
+  switchport_access_vlan: switchport_access_vlan
+  switchport_allowed_vlan: switchport_allowed_vlan
+  port_channel_mode: port_channel_modeport_channel_modeport_channel_mode
+  port_channel_member: port_channel_member
+  vpc: vpc
+  stp_port_type: stp_port_type
+  stp_link_type: stp_link_type
+  acl_in_v4: acl_in_v4
+  acl_out_v4: acl_out_v4
+  acl_in_v6: acl_in_v6
+  acl_out_v6: acl_out_v6
+  redirects_v4: redirects_v4
+  redirects_v6: redirects_v6
+  hsrp_group: hsrp_group
+  hsrp_preempt: hsrp_preempt
+  hsrp_priority: hsrp_priority
+  hsrp_ip_addr: hsrp_ip_addr
+hsrp_groups:
+  __data_source__: cmd_hsrp
+  device_name: __device_name__
+  interface: interface
+  group:  group_id
+  addr: group_addr
+  state: state
+  prio:  priority
+  preempt:  preempt
+  active_addr: active_addr
+  standby_addr: standby_addr
+acl_cfg:
+  __data_source__: cfg_acl
+  device_name: __device_name__
+  name: name
+  acl_type: type
+  sequence: sequence
+  action: action
+  protocol: protocol
+  src: source
+  src_port: source_port
+  dst: destination
+  dst_port: destination_port
+  flags: flags
+  

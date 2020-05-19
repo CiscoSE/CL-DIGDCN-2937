@@ -1,0 +1,42 @@
+# Copyright (c) 2020 Cisco and/or its affiliates.
+#
+# This software is licensed to you under the terms of the Cisco Sample
+# Code License, Version 1.1 (the "License"). You may obtain a copy of the
+# License at
+#
+#                https://developer.cisco.com/docs/licenses
+#
+# All use of the material herein must be in accordance with the terms of
+# the License. All rights not expressly granted by the License are
+# reserved. Unless required by applicable law or agreed to separately in
+# writing, software distributed under the License is distributed on an "AS
+# IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied.
+#
+#---------------------------------------------------------------------
+# FSM Template for parsing the output of "show hsrp brief" on Cisco NXOS
+#---------------------------------------------------------------------
+#
+# Sample command output:
+#
+# *:IPv6 group   #:group belongs to a bundle
+#                      P indicates configured to preempt.
+#                      |
+#  Interface   Grp  Prio P State    Active addr      Standby addr     Group addr
+#   Vlan110     110  110  P Active   local            100.64.110.3     100.64.110.1    (conf)
+#   Vlan120     120  110  P Active   local            100.64.120.3     100.64.120.1    (conf)
+#
+Value INTERFACE (\S+(\s\S+)*)
+Value GROUP (\d+)
+Value PRIORITY (\d+)
+Value PREEMPT (\S+)
+Value STATE (\S+)
+Value ACTIVE_ADDR (\S+)
+Value STANDBY_ADDR (\S+)
+Value GROUP_ADDR (\S+)
+
+Start
+  # Match lines with preempt
+  ^\s*${INTERFACE}\s+${GROUP}\s+${PRIORITY}\s+${PREEMPT}\s+${STATE}\s+${ACTIVE_ADDR}\s+${STANDBY_ADDR}\s+${GROUP_ADDR}\s+\S+ -> Record
+  # Match lines without preempt
+  ^\s*${INTERFACE}\s+${GROUP}\s+${PRIORITY}\s+${STATE}\s+${ACTIVE_ADDR}\s+${STANDBY_ADDR}\s+${GROUP_ADDR}\s+\S+ -> Record

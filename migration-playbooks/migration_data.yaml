@@ -1,0 +1,150 @@
+# Copyright (c) 2020 Cisco and/or its affiliates.
+#
+# This software is licensed to you under the terms of the Cisco Sample
+# Code License, Version 1.1 (the "License"). You may obtain a copy of the
+# License at
+#
+#                https://developer.cisco.com/docs/licenses
+#
+# All use of the material herein must be in accordance with the terms of
+# the License. All rights not expressly granted by the License are
+# reserved. Unless required by applicable law or agreed to separately in
+# writing, software distributed under the License is distributed on an "AS
+# IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied.
+
+aci:
+  tenant:
+    - name: BRKDCN-2937
+  vrf:
+    - name: l2_migration
+      tenant: BRKDCN-2937
+    - name: main
+      tenant: BRKDCN-2937
+  bd:
+    - name: wordpress_db
+      tenant: BRKDCN-2937
+      l2_mode_settings:
+        mac: 00:22:BD:F8:19:FF
+        vrf: l2_migration
+        enable_routing: no
+        arp_flooding: yes
+        l2_unknown_unicast: flood
+        l3_unknown_multicast: flood
+        multi_dest: bd-flood
+      l3_mode_settings:
+        mac: "00:00:0C:07:AC:82"
+        vrf: main
+        enable_routing: yes
+        arp_flooding: no
+        l2_unknown_unicast: proxy
+        l3_unknown_multicast: flood
+        multi_dest: bd-flood
+  bd_l3out:
+    - name: wordpress_db
+      tenant: BRKDCN-2937
+      l3out: "Campus_Uplink"
+    - name: wordpress_db
+      tenant: BRKDCN-2937
+      l3out: "Existing_Interconnect"
+  bd_subnet:
+    - name: wordpress_db
+      tenant: BRKDCN-2937
+      bd: wordpress_db
+      gateway: 100.64.130.1
+      mask: 24
+      scope: public
+  app_profile:
+    - name: wordpress
+      tenant: BRKDCN-2937
+  epg:
+    - name: "db"
+      tenant: BRKDCN-2937
+      bd: wordpress_db
+      app_profile: wordpress
+      vmm_domain: DCV-APIC-POD5-DVS
+      vmm_provider: vmware
+  epg_vmm_domain:
+    - name: DCV-APIC-POD5-DVS
+      tenant: BRKDCN-2937
+      bd: wordpress_db
+      app_profile: wordpress
+      epg: "db"
+      type: vmm
+      vmm_provider: vmware
+  epg_phys_domain:
+    - name: dcv-vxlan-s1
+      tenant: BRKDCN-2937
+      bd: wordpress_db
+      app_profile: wordpress
+      epg: "db"
+      type: phys
+  epg_static_binding:
+    - name: dcv-vxlan-s1
+      tenant: BRKDCN-2937
+      bd: wordpress_db
+      app_profile: wordpress
+      epg: "db"
+      type: vpc
+      mode: trunk
+      encap_vlan_id: 130
+      pod_id: 1
+      leafs:
+        - 1301
+        - 1302
+  epg_contract:
+    - name: "db"
+      tenant: BRKDCN-2937
+      bd: wordpress_db
+      app_profile: wordpress
+      contract: wordpress_db
+      contract_type: provider
+  ext_epg_contract:
+    - name: existing_dc
+      tenant: BRKDCN-2937
+      l3out: Existing_Interconnect
+      contract: wordpress_db
+  contract:
+    - name: wordpress_db
+      scope: context
+      tenant: BRKDCN-2937
+  contract_subject:
+    - name: db
+      tenant: BRKDCN-2937
+      contract: wordpress_db
+      reverse_filter: yes
+  contract_filter:
+    - name: tcp_3306
+      tenant: BRKDCN-2937
+  contract_filter_entry:
+    - name: tcp_3306
+      tenant: BRKDCN-2937
+      filter: tcp_3306
+      ether_type: ip
+      ip_protocol: tcp
+      dst_port: "3306"
+  contract_filter_association:
+    - name: wordpress_db
+      tenant: BRKDCN-2937
+      subject: db
+      filter: tcp_3306
+legacy:
+  l3_interface:
+    - vlan130
+vmware:
+  vm:
+    - name: cleur-db-1
+      aci_networks:
+        - label: "Network adapter 1"
+          name: "VM Network"
+          state: present
+        - label: "Network adapter 2"
+          name: "BRKDCN-2937|wordpress|db"
+          state: present
+      legacy_networks:
+        - label: "Network adapter 1"
+          name: "VM Network"
+          state: present
+        - label: "Network adapter 2"
+          name: "CL-Db"
+          state: present
